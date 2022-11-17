@@ -1,6 +1,10 @@
 {
   "name": "wasm-angular-spa",
   "version": "0.0.0",
+  "browser": {
+    "path": false,
+    "fs": false
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

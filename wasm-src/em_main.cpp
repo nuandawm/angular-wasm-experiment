@@ -1,14 +1,17 @@
-#include <cstdio>
-#include <string>
-#include <iostream>
-#include <fstream>
+#include <stdio.h>
 #include <emscripten.h>
-#include <emscripten/bind.h>
-using namespace emscripten;
 
 extern "C" {
 
-int read_file(char* fileName) {
+int hello(int input) {
+    return input;
+}
+
+int sum(int first, int second) {
+    return first + second;
+}
+
+/*int read_file(char* fileName) {
     std::fstream fs;
     fs.open("test.txt", std::fstream::in | std::fstream::binary);
     if (fs) {
@@ -22,6 +25,6 @@ int read_file(char* fileName) {
     } else {
         return 0;
     }
-}
+}*/
 
 }
