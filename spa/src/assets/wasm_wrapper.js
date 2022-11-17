@@ -33,7 +33,7 @@ Module['ready'] = new Promise(function(resolve, reject) {
   readyPromiseResolve = resolve;
   readyPromiseReject = reject;
 });
-["_hello_function","_sum","_fflush","onRuntimeInitialized"].forEach((prop) => {
+["_hello","_sum","_fflush","onRuntimeInitialized"].forEach((prop) => {
   if (!Object.getOwnPropertyDescriptor(Module['ready'], prop)) {
     Object.defineProperty(Module['ready'], prop, {
       get: () => abort('You are getting ' + prop + ' on the Promise object, instead of the instance. Use .then() to get called back with the instance, see the MODULARIZE docs in src/settings.js'),
@@ -1322,7 +1322,7 @@ var asm = createWasm();
 var ___wasm_call_ctors = Module["___wasm_call_ctors"] = createExportWrapper("__wasm_call_ctors", asm);
 
 /** @type {function(...*):?} */
-var _hello_function = Module["_hello_function"] = createExportWrapper("hello_function", asm);
+var _hello = Module["_hello"] = createExportWrapper("hello", asm);
 
 /** @type {function(...*):?} */
 var _sum = Module["_sum"] = createExportWrapper("sum", asm);

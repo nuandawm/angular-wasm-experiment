@@ -8,7 +8,8 @@ import { DevToolsService } from './dev-tools.service';
 
 type WasmModule = {
   _hello: (n: number) => number,
-  _sum: (m: number, n: number) => number
+  _sum: (m: number, n: number) => number,
+  FS_createDataFile: (path: string, fileName: string, data: Uint8Array, canRead: boolean, canWrite: boolean) => void
 }
 
 @Injectable({
@@ -42,5 +43,9 @@ export class WasmService {
     )
   }
 
-
+  createFile(fileName: string, fileData: Uint8Array): Observable<void> {
+    return this.module$.pipe(
+      map(module => module.FS_createDataFile('/', fileName, fileData, true, true))
+    )
+  }
 }
