@@ -24,8 +24,7 @@ export class AppComponent implements OnInit {
       switchMap(selectedFile => selectedFile.arrayBuffer().then(data => ({
         data,
         name: selectedFile.name
-      }))),
-      tap(DevToolsService.getObserverLog('data'))
+      })))
     ).subscribe(({data, name}) => {
       this.wasmService.createFile(name, new Uint8Array(data))
     })

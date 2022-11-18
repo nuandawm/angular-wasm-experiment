@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 // @ts-ignore
 import * as Module from '../assets/wasm_wrapper.js';
-import { map, Observable, ReplaySubject } from 'rxjs';
+import { map, Observable, ReplaySubject, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { DevToolsService } from './dev-tools.service';
 
@@ -16,7 +16,6 @@ type WasmModule = {
   providedIn: 'root'
 })
 export class WasmService {
-  public module: any;
   public module$: ReplaySubject<WasmModule> = new ReplaySubject<WasmModule>();
 
   constructor(private httpClient: HttpClient) {
@@ -26,7 +25,6 @@ export class WasmService {
         wasmBinary: binary
       }))
     ).subscribe(module => {
-      console.log('module', module);
       this.module$.next(module);
     });
   }
