@@ -6,7 +6,7 @@ import { Observer } from 'rxjs';
 })
 export class DevToolsService {
 
-  static getObserverLog(message: string): Observer<any> {
+  static getLogObserver(message: string): Observer<any> {
     return {
       next: data => console.log(`[next ${message}]`, data),
       error: err => console.log(`[error ${message}]`, err),

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { WasmService } from './wasm.service';
-import { Observable, Subject, switchMap, tap } from 'rxjs';
+import { map, Observable, Subject, switchMap } from 'rxjs';
 import { DevToolsService } from './dev-tools.service';
+import { SurfData } from './models/surf-data';
 
 @Component({
   selector: 'app-root',
@@ -12,22 +13,25 @@ export class AppComponent implements OnInit {
   title = 'wasm-angular-spa';
 
   sumResult$: Observable<number> | undefined;
+  surfData$: Observable<SurfData> | undefined;
   selectedFile$ = new Subject<File>();
+  isWasmModuleReady$ = this.wasmService.isModuleReady$.asObservable();
 
   constructor(private wasmService: WasmService) {
   }
 
   ngOnInit() {
-    this.sumResult$ = this.wasmService.wasmSum(40, 2);
-
-    this.selectedFile$.pipe(
+    this.surfData$ = this.selectedFile$.pipe(
       switchMap(selectedFile => selectedFile.arrayBuffer().then(data => ({
         data,
         name: selectedFile.name
-      })))
-    ).subscribe(({data, name}) => {
-      this.wasmService.createFile(name, new Uint8Array(data))
-    })
+      }))),
+      // Create the file
+      switchMap(({name, data}) => this.wasmService.createFile(name, new Uint8Array(data))
+        .pipe(map(() => ({name, data})))),
+      // Get data from the created file
+      switchMap(({name, data}) => this.wasmService.wasmWrapperReadSurfFile(name))
+    );
   }
 
   onFileSelected(event: any) {

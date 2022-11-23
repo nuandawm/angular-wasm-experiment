@@ -350,13 +350,22 @@
   </div>
 
   <div class="item-wrapper">
-    <h3>A blazingly fast sum</h3>
-    Result: {{sumResult$|async}}
+    <h3>Is WASM module ready?</h3>
+    Status: {{(isWasmModuleReady$|async) ? 'ready' : 'not ready'}}
   </div>
 
   <div class="item-wrapper">
     <h3>Select a file</h3>
     <input type="file" (change)="onFileSelected($event)">
+  </div>
+
+  <div class="item-wrapper">
+    <h3>SURF file data</h3>
+    <ng-container *ngIf="surfData$|async as surfData">
+      <ul>
+        <li>Operator name: {{surfData.operatorName}}</li>
+      </ul>
+    </ng-container>
   </div>
 </div>
 

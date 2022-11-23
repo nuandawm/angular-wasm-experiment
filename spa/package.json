@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "browser": {
     "path": false,
-    "fs": false
+    "fs": false,
+    "crypto": false
   },
   "scripts": {
     "ng": "ng",
