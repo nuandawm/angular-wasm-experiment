@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { WasmService } from './wasm.service';
-import { map, Observable, Subject, switchMap } from 'rxjs';
+import { map, Observable, Subject, switchMap, tap } from 'rxjs';
 import { DevToolsService } from './dev-tools.service';
 import { SurfData } from './models/surf-data';
 
@@ -30,7 +30,8 @@ export class AppComponent implements OnInit {
       switchMap(({name, data}) => this.wasmService.createFile(name, new Uint8Array(data))
         .pipe(map(() => ({name, data})))),
       // Get data from the created file
-      switchMap(({name, data}) => this.wasmService.wasmWrapperReadSurfFile(name))
+      switchMap(({name, data}) => this.wasmService.wasmWrapperReadSurfFile(name)),
+      tap(DevToolsService.getLogObserver('data'))
     );
   }
 
