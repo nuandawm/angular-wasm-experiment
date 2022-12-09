@@ -292,8 +292,14 @@ SurfData wrapperReadSurfFile(std::string filePath) {
     return readSurfFile(filePath);
 }
 
-void wrapperReadSurfFilePoints32(std::string filePath, int dataStart, int32_t data[], int32_t totalNumberOfPoints) {
+void wrapperReadSurfDataPoints32(std::string filePath, int dataStart, int dataPtr, int32_t totalNumberOfPoints) {
+    int* data = reinterpret_cast<int*>(dataPtr);
     readSurfFilePoints32(filePath, dataStart, data, totalNumberOfPoints);
+}
+
+void wrapperReadSurfDataPoints(int dataPtr) {
+    int* data = reinterpret_cast<int*>(dataPtr);
+    data[0] = 42;
 }
 
 EMSCRIPTEN_BINDINGS(my_value_example) {
@@ -360,5 +366,7 @@ EMSCRIPTEN_BINDINGS(my_value_example) {
 
     emscripten::function("wrapperReadSurfFile", &wrapperReadSurfFile);
 
-    emscripten::function("wrapperReadSurfFilePoints32", &wrapperReadSurfFilePoints32, emscripten::allow_raw_pointers());
+    emscripten::function("wrapperReadSurfDataPoints32", &wrapperReadSurfDataPoints32);
+
+    emscripten::function("wrapperReadSurfDataPoints", &wrapperReadSurfDataPoints);
 }

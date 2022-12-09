@@ -1,10 +1,6 @@
-import { Injectable } from '@angular/core';
 import { Observer } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class DevToolsService {
+export class DevTools {
 
   static getLogObserver(message: string): Observer<any> {
     return {

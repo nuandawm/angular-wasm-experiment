@@ -1144,7 +1144,7 @@ var tempI64;
 // === Body ===
 
 var ASM_CONSTS = {
-  16852: () => { console.log('file not found'); }
+  16628: () => { console.log('file not found'); }
 };
 
 
@@ -5351,6 +5351,19 @@ var ASM_CONSTS = {
       return ret;
     }
 
+  
+    /**
+     * @param {string=} returnType
+     * @param {Array=} argTypes
+     * @param {Object=} opts
+     */
+  function cwrap(ident, returnType, argTypes, opts) {
+      return function() {
+        return ccall(ident, returnType, argTypes, arguments, opts);
+      }
+    }
+
+
   var FSNode = /** @constructor */ function(parent, name, mode, rdev) {
     if (!parent) {
       parent = this;  // root node sets parent to itself
@@ -5628,6 +5641,8 @@ var dynCall_iiiiiijj = Module["dynCall_iiiiiijj"] = createExportWrapper("dynCall
 
 Module["FS_createDataFile"] = FS.createDataFile;
 Module["ccall"] = ccall;
+Module["cwrap"] = cwrap;
+Module["getValue"] = getValue;
 var unexportedRuntimeSymbols = [
   'run',
   'UTF8ArrayToString',
@@ -5726,7 +5741,6 @@ var unexportedRuntimeSymbols = [
   'convertI32PairToI53Checked',
   'convertU32PairToI53',
   'getCFunc',
-  'cwrap',
   'uleb128Encode',
   'sigToWasmTypes',
   'generateFuncType',
@@ -5743,7 +5757,6 @@ var unexportedRuntimeSymbols = [
   'reSign',
   'formatString',
   'setValue',
-  'getValue',
   'PATH',
   'PATH_FS',
   'intArrayFromString',
@@ -6003,7 +6016,6 @@ var missingLibrarySymbols = [
   'readI53FromU64',
   'convertI32PairToI53',
   'convertU32PairToI53',
-  'cwrap',
   'uleb128Encode',
   'sigToWasmTypes',
   'generateFuncType',

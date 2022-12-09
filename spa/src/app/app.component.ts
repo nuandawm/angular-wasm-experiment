@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { WasmService } from './wasm.service';
-import { map, Observable, Subject, switchMap, tap } from 'rxjs';
-import { DevToolsService } from './dev-tools.service';
+import { filter, map, Observable, shareReplay, Subject, switchMap, tap } from 'rxjs';
+import { DevTools } from './utils/dev-tools';
 import { SurfData } from './models/surf-data';
 
 @Component({
@@ -12,7 +12,7 @@ import { SurfData } from './models/surf-data';
 export class AppComponent implements OnInit {
   title = 'wasm-angular-spa';
 
-  sumResult$: Observable<number> | undefined;
+  dataPoints$: Observable<Array<number>> | undefined;
   surfData$: Observable<SurfData> | undefined;
   selectedFile$ = new Subject<File>();
   isWasmModuleReady$ = this.wasmService.isModuleReady$.asObservable();
@@ -21,17 +21,38 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.surfData$ = this.selectedFile$.pipe(
+    const createdFileName$: Observable<string> = this.selectedFile$.pipe(
       switchMap(selectedFile => selectedFile.arrayBuffer().then(data => ({
         data,
         name: selectedFile.name
       }))),
       // Create the file
       switchMap(({name, data}) => this.wasmService.createFile(name, new Uint8Array(data))
-        .pipe(map(() => ({name, data})))),
+        .pipe(map(() => name))),
+      shareReplay(1)
+    );
+
+    const fileNameAndMetadata$: Observable<{ name: string, metadata: SurfData }> = createdFileName$.pipe(
       // Get data from the created file
-      switchMap(({name, data}) => this.wasmService.wasmWrapperReadSurfFile(name)),
-      tap(DevToolsService.getLogObserver('data'))
+      switchMap(name => this.wasmService.readSurfFileMetadata(name)
+        .pipe(map(metadata => ({ name, metadata })))),
+      shareReplay(1)
+    );
+
+    this.surfData$ = fileNameAndMetadata$.pipe(
+      map(({ metadata }) => metadata)
+    );
+
+    // Load the points using wrapperReadSurfFilePoints32
+    this.dataPoints$ = fileNameAndMetadata$.pipe(
+      switchMap(({ name, metadata }) =>
+        this.wasmService.readSurfMatrixDataPoints32(name, metadata.dataStart, metadata.totalNumberOfPoints, metadata.xPoints, metadata.yPoints)),
+      map(points => [
+        points[50][0],
+        points[50][1],
+        points[50][2],
+      ]),
+      tap(DevTools.getLogObserver('points'))
     );
   }
 

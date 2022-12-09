@@ -2,15 +2,10 @@ import { Injectable } from '@angular/core';
 
 // @ts-ignore
 import * as Module from '../assets/wasm_wrapper.js';
-import { BehaviorSubject, first, map, Observable, Subject } from 'rxjs';
-import { DevToolsService } from './dev-tools.service';
+import { BehaviorSubject, filter, first, map, Observable, Subject, tap } from 'rxjs';
 import { WasmWorkerInMessage, WasmWorkerOutMessage } from './models/wasm-worker';
 import { SurfData } from './models/surf-data';
-
-type WasmModule = {
-  _getSizeOfPoints: () => number,
-  FS_createDataFile: (path: string, fileName: string, data: Uint8Array, canRead: boolean, canWrite: boolean) => void
-};
+import { DevTools } from './utils/dev-tools';
 
 @Injectable({
   providedIn: 'root'
@@ -46,38 +41,62 @@ export class WasmService {
     }
   }
 
-  wasmGetSizeOfPoints() {
-    this.sendWasmWorkerMessage({
-      action: 'CALL',
-      functionName: '_getSizeOfPoints',
-      functionParams: []
-    })
-    return this.wasmWorkerMessage$.pipe(
-      first(),
-      map(({ value }) => value)
-    );
-  }
-
-  wasmWrapperReadSurfFile(fileName: string): Observable<SurfData> {
-    this.sendWasmWorkerMessage({
-      action: 'CALL',
-      functionName: 'wrapperReadSurfFile',
-      functionParams: [`/${fileName}`]
-    });
-    return this.wasmWorkerMessage$.pipe(
-      first(),
-      map(({ value }) => value)
-    );
-  }
-
   createFile(fileName: string, fileData: Uint8Array): Observable<any> {
     this.sendWasmWorkerMessage({
       action: 'CALL',
-      functionName: 'FS_createDataFile',
-      functionParams: ['/', fileName, fileData, true, true]
+      functionName: 'createDataFile',
+      functionParams: [fileName, fileData]
     });
     return this.wasmWorkerMessage$.pipe(
       first()
     );
+  }
+
+  readSurfFileMetadata(fileName: string): Observable<SurfData> {
+    this.sendWasmWorkerMessage({
+      action: 'CALL',
+      functionName: 'readSurfFileMetadata',
+      functionParams: [fileName]
+    });
+    return this.wasmWorkerMessage$.pipe(
+      first(),
+      map(result => result.type === 'FUNCTION_CALLED' ? result.value : null)
+    );
+  }
+
+  readSurfDataPoints(): Observable<number> {
+    this.sendWasmWorkerMessage({
+      action: 'CALL',
+      functionName: 'readSurfDataPoints',
+      functionParams: []
+    });
+    return this.wasmWorkerMessage$.pipe(
+      first(),
+      map(result => result.type === 'FUNCTION_CALLED' ? result.value : null)
+    )
+  }
+
+  readSurfDataPoints32(fileName: string, dataStart: number, totalNumberOfPoints: number): Observable<Array<number>> {
+    this.sendWasmWorkerMessage({
+      action: 'CALL',
+      functionName: 'readSurfDataPoints32',
+      functionParams: [fileName, dataStart, totalNumberOfPoints]
+    });
+    return this.wasmWorkerMessage$.pipe(
+      first(),
+      map(result => result.type === 'FUNCTION_CALLED' ? result.value : null)
+    )
+  }
+
+  readSurfMatrixDataPoints32(fileName: string, dataStart: number, totalNumberOfPoints: number, xPoints: number, yPoints: number): Observable<Array<Array<number>>> {
+    this.sendWasmWorkerMessage({
+      action: 'CALL',
+      functionName: 'readSurfMatrixDataPoints32',
+      functionParams: [fileName, dataStart, totalNumberOfPoints, xPoints, yPoints]
+    });
+    return this.wasmWorkerMessage$.pipe(
+      first(),
+      map(result => result.type === 'FUNCTION_CALLED' ? result.value : null)
+    )
   }
 }

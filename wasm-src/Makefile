@@ -6,7 +6,7 @@ wasm_wrapper.js: em_main.cpp
 	-sWASM=1 \
 	-sMODULARIZE=1 \
 	-sWASM_ASYNC_COMPILATION=0 \
-	-sEXPORTED_RUNTIME_METHODS=ccall,FS_createDataFile \
+	-sEXPORTED_RUNTIME_METHODS=ccall,cwrap,FS_createDataFile,getValue \
 	-sEXPORTED_FUNCTIONS=_getSizeOfPoints
 
 clean:

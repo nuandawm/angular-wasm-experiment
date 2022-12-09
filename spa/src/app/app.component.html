@@ -360,12 +360,21 @@
   </div>
 
   <div class="item-wrapper">
-    <h3>SURF file data</h3>
+    <h3>SURF file metadata</h3>
     <ng-container *ngIf="surfData$|async as surfData">
       <ul>
         <li>Operator name: {{surfData.operatorName}}</li>
       </ul>
     </ng-container>
+  </div>
+
+  <div class="item-wrapper">
+    <h3>SURF points</h3>
+    <ul>
+      <li *ngFor="let point of (dataPoints$|async)">
+        {{point}}
+      </li>
+    </ul>
   </div>
 </div>
 
