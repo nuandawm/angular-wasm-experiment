@@ -12,7 +12,8 @@ import { SurfData } from './models/surf-data';
 export class AppComponent implements OnInit {
   title = 'wasm-angular-spa';
 
-  dataPoints$: Observable<Array<number>> | undefined;
+  dataPoints$: Observable<Array<Array<number>>> | undefined;
+  firstThreeDataPoints$: Observable<Array<number>> | undefined;
   surfData$: Observable<SurfData> | undefined;
   selectedFile$ = new Subject<File>();
   isWasmModuleReady$ = this.wasmService.isModuleReady$.asObservable();
@@ -47,13 +48,17 @@ export class AppComponent implements OnInit {
     this.dataPoints$ = fileNameAndMetadata$.pipe(
       switchMap(({ name, metadata }) =>
         this.wasmService.readSurfMatrixDataPoints32(name, metadata.dataStart, metadata.totalNumberOfPoints, metadata.xPoints, metadata.yPoints)),
+      tap(points => console.log('points', points.length)),
+    );
+
+    this.firstThreeDataPoints$ = this.dataPoints$?.pipe(
       map(points => [
         points[50][0],
         points[50][1],
         points[50][2],
       ]),
       tap(DevTools.getLogObserver('points'))
-    );
+    )
   }
 
   onFileSelected(event: any) {

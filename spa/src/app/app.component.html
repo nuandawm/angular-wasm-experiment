@@ -266,15 +266,22 @@
   <div class="item-wrapper">
     <h3>SURF points</h3>
     <ul>
-      <li *ngFor="let point of (dataPoints$|async)">
+      <li *ngFor="let point of (firstThreeDataPoints$|async)">
         {{point}}
       </li>
     </ul>
   </div>
 
-  <div class="item-wrapper">
+  <!--div class="item-wrapper">
     <h3>Scatter plot chart</h3>
     <app-d3-scatter-plot></app-d3-scatter-plot>
+  </div-->
+
+  <div class="item-wrapper">
+    <h3>Plotly scatter plot</h3>
+    <ng-container *ngIf="dataPoints$|async as dataPoints">
+      <app-plotly-scatter-plot [points]="dataPoints"></app-plotly-scatter-plot>
+    </ng-container>
   </div>
 </div>
 

@@ -5,11 +5,13 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { D3ScatterPlotComponent } from './d3-scatter-plot/d3-scatter-plot.component';
+import { PlotlyScatterPlotComponent } from './plotly-scatter-plot/plotly-scatter-plot.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    D3ScatterPlotComponent
+    D3ScatterPlotComponent,
+    PlotlyScatterPlotComponent
   ],
   imports: [
     BrowserModule,
