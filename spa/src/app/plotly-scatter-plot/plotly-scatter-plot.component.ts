@@ -1,6 +1,5 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import Plotly from 'plotly.js-dist-min';
-import { filter, ReplaySubject, Subject } from 'rxjs';
 @Component({
   selector: 'app-plotly-scatter-plot',
   templateUrl: './plotly-scatter-plot.component.html',
@@ -10,24 +9,20 @@ export class PlotlyScatterPlotComponent implements OnInit {
 
   @ViewChild('plotContainerElement', {static: true}) plotContainerElement: ElementRef | undefined;
 
-  private _points$ = new ReplaySubject<Array<Array<number>>>(1);
-  @Input() set points(value: Array<Array<number>>){
-    this._points$.next(value);
-  };
+  @Input() points: Array<Array<number>> | undefined;
   constructor() { }
   ngOnInit(): void {
-    this._points$.pipe(
-      filter(points => points !== undefined)
-    ).subscribe(points => {
-      const xData = []
-      const yData = []
-      const zData = []
-      const size = 200;
+    if (this.points) {
+      // Pick the first 400x400 points
+      const size = 400;
+      let xData = []
+      let yData = []
+      let zData = []
       for (let x=0; x<size; x++) {
         for (let y=0; y<size; y++) {
           xData.push(x);
           yData.push(y);
-          zData.push(points[x][y]);
+          zData.push(this.points[x][y]);
         }
       }
 
@@ -39,7 +34,9 @@ export class PlotlyScatterPlotComponent implements OnInit {
         mode: 'markers',
         marker: {
           size: 1,
-          opacity: 1
+          opacity: 1,
+          color: zData,
+          colorscale: 'Viridis'
         },
       }];
 
@@ -48,7 +45,7 @@ export class PlotlyScatterPlotComponent implements OnInit {
           margin: { t: 0 }
         });
       }
-    });
+    }
   }
 
 }
