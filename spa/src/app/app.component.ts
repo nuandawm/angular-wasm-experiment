@@ -48,7 +48,6 @@ export class AppComponent implements OnInit {
     this.dataPoints$ = fileNameAndMetadata$.pipe(
       switchMap(({ name, metadata }) =>
         this.wasmService.readSurfMatrixDataPoints32(name, metadata.dataStart, metadata.totalNumberOfPoints, metadata.xPoints, metadata.yPoints)),
-      tap(points => console.log('points', points.length)),
     );
 
     this.firstThreeDataPoints$ = this.dataPoints$?.pipe(
