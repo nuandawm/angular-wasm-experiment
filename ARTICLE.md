@@ -35,3 +35,5 @@ Spoiler: size limitation when loading a WASM module (Workers)
 Spoiler: bad performance issues
 
 ### Second try: Plotly.js
+
+Test
